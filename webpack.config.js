@@ -29,37 +29,47 @@ var options = {
   module: {
     noParse: [/.elm$/],
     rules: [
-    {
-      test: /\.css$/,
-      loader: "style-loader!css-loader",
-      exclude: /node_modules/
-    },
-    {
-      test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
-      loader: "file-loader?name=[name].[ext]",
-      exclude: /node_modules/
-    },
-    {
-      test: /\.html$/,
-      loader: "html-loader",
-      exclude: /node_modules/
-    },
-    {
-      test: /\.elm$/,
-      exclude: [/elm-stuff/, /node_modules/],
-      use: [{
-        loader: 'elm-webpack-loader',
-        options: {
-          verbose: true,
-          warn: true
-        }
-      }]
-    }]
-  },
-  resolve: {
-    alias: alias
-  },
-  plugins: [
+            {
+              test: /\.sass$/,
+              use: [{
+                loader: "style-loader" // creates style nodes from JS strings
+              }, {
+                loader: "css-loader" // translates CSS into CommonJS
+              }, {
+                loader: "sass-loader" // compiles Sass to CSS
+              }]
+            },
+            {
+              test: /\.css$/,
+              loader: "style-loader!css-loader",
+              exclude: /node_modules/
+            },
+            {
+              test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
+              loader: "file-loader?name=[name].[ext]",
+              exclude: /node_modules/
+            },
+            {
+              test: /\.html$/,
+              loader: "html-loader",
+              exclude: /node_modules/
+            },
+            {
+              test: /\.elm$/,
+              exclude: [/elm-stuff/, /node_modules/],
+              use: [{
+                loader: 'elm-webpack-loader',
+                options: {
+                  verbose: true,
+                  warn: true
+                }
+              }]
+            }]
+          },
+          resolve: {
+            alias: alias
+          },
+          plugins: [
     // expose and write the allowed env vars on the compiled bundle
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(env.NODE_ENV)

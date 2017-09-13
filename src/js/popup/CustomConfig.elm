@@ -1,5 +1,6 @@
 module CustomConfig exposing (..)
-
+import Html exposing (i)
+import Html.Attributes exposing (class, attribute)
 import Table exposing (defaultCustomizations)
 
 customizations : Table.Customizations data msg
@@ -23,3 +24,14 @@ invisibleColumn name toInt =
         sorter = Table.increasingOrDecreasingBy toInt
     }
 
+
+deleteButtonColumn: Table.Column data msg
+deleteButtonColumn = 
+    Table.veryCustomColumn
+    {
+      name = "delete",
+      viewData = \_ -> Table.HtmlDetails [] [i [class "fa fa-times-circle-o icon-close", attribute "aria-hidden" "true"][]],
+      sorter = Table.unsortable
+    }
+
+--$("<i>", {"class": "fa fa-times-circle-o icon-close ", "data-index": index, "aria-hidden": "true"}

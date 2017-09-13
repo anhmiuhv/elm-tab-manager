@@ -1,7 +1,26 @@
-import "../css/popup.css";
-import hello from "./popup/example";
-var Elm = require("./Main.elm")
-require('../popup.html');
+import "../css/popup.sass";
+const Elm = require("./popup/Main.elm")
 
-var mountPoint = document.getElementById("elm-mount")
-var app = Elm.Main.embed(mountPoint)
+const mountPoint = document.getElementById("elm-mount")
+const app = Elm.Main.embed(mountPoint)
+
+// get tabs ports
+app.ports.getAllTabs.subscribe((s) => {
+    chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (ts) => {
+        app.ports.allTabs.send(ts.map((t) => {
+            const r = {
+                id: t.id,
+                name: t.title || "Empty Tab",
+                url: t.url || "www.example.com",
+                index: t.index
+            }
+            return r
+        }))
+    })
+})
+
+
+app.ports.highlight.subscribe((s) => {
+    chrome.tabs.highlight({tabs:s})
+})
+

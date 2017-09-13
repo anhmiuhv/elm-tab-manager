@@ -6,7 +6,7 @@ type alias Tab =
     name : String, 
     index: Int,
     url: String
-}
+    }
 
 
 tbs : List Tab

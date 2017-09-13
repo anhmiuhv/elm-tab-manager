@@ -1,0 +1,48 @@
+  /* Prevent the text contents of draggable elements from being selectable. */
+$bottomBorderColor: #848484
+$onHoverColor: #DAE98B
+#searchBox
+  width: 200px
+  display: flex
+  background-color: #fdfdff
+  border: none
+  flex: auto
+  margin: 0px 10px 0px 10px
+  padding: 5px 5px
+  box-sizing: border-box
+  resize: none
+  font-size: 100%
+
+@font-face
+  font-family: "SanFrancissco"
+  src: url(../font/SanFranciscoDisplay-Bold.otf)
+
+
+table
+  margin-top: 5px
+  border-collapse: collapse
+  width: 90%
+  font: 100% "SanFrancissco";
+
+
+td
+  padding: 10px 10px
+  border-bottom: 1px solid $bottomBorderColor
+  text-align: justify
+  
+
+tr
+  margin-top: 3px
+  &:hover
+    background-color: $onHoverColor
+
+
+
+
+#body
+  background-color: white
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
