@@ -1,20 +1,32 @@
 {
-  "name": "Chrome Extension Webpack",
-  "options_page": "options.html",
-  "background": {
-    "page": "background.html"
-  },
-  "browser_action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon-34.png"
-  },
-  "icons": {
-    "128": "icon-128.png"
-  },
   "manifest_version": 2,
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+
+  "name": "manage tabs",
+  "description": "This extension enables a better tab management",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "manage tab"
+  },
+
+  "icons": { "16": "icon.png",
+           "48": "icon-48.png",
+          "128": "icon-128.png"
+  },
   "permissions": [
     "activeTab",
     "tabs"
-  ]
+  ],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "linux": "Ctrl+Shift+A",
+        "windows": "Ctrl+Shift+A",
+        "mac": "Ctrl+Shift+A"
+      }
+    }
+  }
 }
