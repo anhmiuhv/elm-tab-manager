@@ -4,6 +4,11 @@
   "name": "manage tabs",
   "description": "This extension enables a better tab management",
   "version": "1.0",
+  "options_page": "options.html",
+  "background": {
+  "page": "background.html"
+  },
+
 
   "browser_action": {
     "default_icon": "icon.png",
@@ -19,6 +24,7 @@
     "activeTab",
     "tabs"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
