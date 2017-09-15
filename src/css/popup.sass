@@ -1,6 +1,11 @@
-  /* Prevent the text contents of draggable elements from being selectable. */
+$fa-font-path: "~font-awesome/fonts"
+@import "~font-awesome/scss/font-awesome"
+
+$closeHoverColor: #BE5656
 $bottomBorderColor: #848484
-$onHoverColor: #DAE98B
+$onHoverColor: #ABABC6
+
+
 #searchBox
   width: 200px
   display: flex
@@ -29,13 +34,26 @@ td
   padding: 10px 10px
   border-bottom: 1px solid $bottomBorderColor
   text-align: justify
-  
+  position: relative
+
 
 tr
   margin-top: 3px
   &:hover
     background-color: $onHoverColor
 
+.close
+  width: 100%
+  height: 100%
+  position: absolute
+  left: 0
+  top: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: row
+  &:hover
+    background-color: $closeHoverColor
 
 
 
@@ -45,4 +63,3 @@ tr
   flex-direction: column
   justify-content: center
   align-items: center
-

@@ -28,9 +28,12 @@ var options = {
   },
   module: {
     noParse: [/.elm$/],
+
     rules: [
+      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
             {
-              test: /\.sass$/,
+              test: /\.s(a|c)ss$/,
               use: [{
                 loader: "style-loader" // creates style nodes from JS strings
               }, {

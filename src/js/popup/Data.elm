@@ -1,18 +1,28 @@
-module Data exposing (tbs, Tab)
-
+module Data exposing (..)
+import Table
 type alias Tab =
     {
     id : Int,
-    name : String, 
+    name : String,
     index: Int,
     url: String
     }
 
+type Msg
+  = SetQuery String
+  | SetTableState Table.State
+  | AllTabs (List Tab)
+  | ClickFrom Int
+  | CloseFrom Int
 
-tbs : List Tab
-tbs = 
-    [
-    Tab 1 "Hello" 8 "www.edu.edu",
-    Tab 23 "Besy" 2 "wpi.edu",
-    Tab 43 "gh" 1 "google.com"
-    ]
+
+createNameAndId: Tab -> NameAndId
+createNameAndId t = {
+    name = t.name,
+    id = t.id
+ }
+
+type alias NameAndId = {
+  name: String,
+  id: Int
+ }

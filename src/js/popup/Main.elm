@@ -3,15 +3,20 @@ port module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (placeholder, id)
 import Html.Events exposing (onInput, onClick)
-import Data exposing (tbs, Tab)
-import CustomConfig exposing (customizations, invisibleColumn)
+import CustomConfig exposing (customizations, invisibleColumn, deleteButtonColumn,
+                              clickableData, clickableColumn)
 import Table
-import Chrome 
+import Chrome
+import Search
+import Regex
+import List.Extra
+import Data exposing (..)
+
 
 main =
     Html.program
-    { 
-    init = init tbs
+    {
+    init = init []
     , update = update
     , view = view
     , subscriptions = subscriptions
@@ -20,17 +25,17 @@ main =
 
   -- MODEL
 
-type alias Model = 
-    { 
+type alias Model =
+    {
     tabs : List Tab
     , tableState : Table.State
     , query : String
     }
 
 init : List Tab -> (Model, Cmd Msg)
-init tbs = 
-    let 
-        model = 
+init tbs =
+    let
+        model =
         { tabs = tbs
             , tableState = Table.initialSort "Index"
             , query = ""
@@ -40,12 +45,6 @@ init tbs =
 
 -- UPDATE
 
-
-type Msg
-  = SetQuery String
-  | SetTableState Table.State
-  | AllTabs (List Tab)
-  | ClickFrom Int
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -62,8 +61,10 @@ update msg model =
 
     AllTabs tabs -> ( Model tabs (Table.initialSort "Index") "", Cmd.none)
 
-    ClickFrom i -> (model, Chrome.highlight i)
-    
+    ClickFrom id -> (model, Chrome.highlight id)
+
+    CloseFrom id -> ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }, Chrome.close id)
+
 
 
 -- VIEW
@@ -71,11 +72,11 @@ update msg model =
 view : Model -> Html Msg
 view {tabs, tableState, query} =
     let
-      lowerQuery =
-        String.toLower query
+      keywords =
+        String.words << String.toLower << Regex.escape <| query
 
       querriedTabs =
-        List.filter (String.contains lowerQuery << String.toLower << .name) tabs
+        List.map Tuple.first <| Search.search tabs keywords
     in
         div [id "body"]
             [ input [id "searchBox",placeholder "Search", onInput SetQuery] [],
@@ -83,43 +84,22 @@ view {tabs, tableState, query} =
             ]
 
 config : Table.Config Tab Msg
-config = 
-    Table.customConfig 
+config =
+    Table.customConfig
         { toId = toString << .id
         , toMsg = SetTableState
         , columns =
             [
-            clickableColumn "Name" createNameAndIndex
+            clickableColumn "Name" clickableData createNameAndId
             , invisibleColumn "Index" .index
+            , deleteButtonColumn CloseFrom .id
             ]
         , customizations = customizations
         }
 
-createNameAndIndex: Tab -> NameAndIndex
-createNameAndIndex t = {
-    name = t.name,
-    index = t.index
- } 
-type alias NameAndIndex = {
-  name: String,
-  index: Int
- }
 
-clickableColumn :  String -> (data ->NameAndIndex) -> Table.Column data Msg
-clickableColumn name toStr =
-   Table.veryCustomColumn
-       {
-            name = name,
-            viewData = clickableData << toStr,
-            sorter = Table.increasingOrDecreasingBy  <| .name << toStr
-      }
 
 -- SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Chrome.allTabs AllTabs
-
-
-clickableData : NameAndIndex -> Table.HtmlDetails Msg
-clickableData x = Table.HtmlDetails [onClick (ClickFrom x.index)] [ Html.text (x.name) ]
-

@@ -21,6 +21,12 @@ app.ports.getAllTabs.subscribe((s) => {
 
 
 app.ports.highlight.subscribe((s) => {
-    chrome.tabs.highlight({tabs:s})
+    chrome.tabs.get(s, (t) => {
+      chrome.tabs.highlight({tabs:t.index})
+    })
+
 })
 
+app.ports.close.subscribe((s) => {
+    chrome.tabs.remove (s)
+})
