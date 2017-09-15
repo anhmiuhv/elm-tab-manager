@@ -5,7 +5,7 @@ import Html.Events exposing (onClick)
 import Table exposing (defaultCustomizations)
 import Data exposing (..)
 
-
+-- remove thead, otherwise use popup.sass for design
 customizations : Table.Customizations data msg
 customizations =
     {
@@ -48,6 +48,7 @@ clickableColumn name emitter toType =
     sorter = Table.increasingOrDecreasingBy <| .name << toType
   }
 
+-- limitted tabs name to 53 letters (artistic decisions)
 prettyFormat : String -> String
 prettyFormat str =
   if String.length str < 53 then

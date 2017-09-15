@@ -9,10 +9,9 @@ import Table
 import Chrome
 import Search
 import Regex
-import List.Extra
 import Data exposing (..)
 
-
+main : Program Never Model Msg
 main =
     Html.program
     {
@@ -25,18 +24,11 @@ main =
 
   -- MODEL
 
-type alias Model =
-    {
-    tabs : List Tab
-    , tableState : Table.State
-    , query : String
-    }
-
 init : List Tab -> (Model, Cmd Msg)
 init tbs =
     let
         model =
-        { tabs = tbs
+        { tabs = List.map createFtab tbs
             , tableState = Table.initialSort "Index"
             , query = ""
         }
@@ -59,7 +51,7 @@ update msg model =
       , Cmd.none
       )
 
-    AllTabs tabs -> ( Model tabs (Table.initialSort "Index") "", Cmd.none)
+    AllTabs tabs -> ( Model (List.map createFtab tabs) (Table.initialSort "Index") "", Cmd.none)
 
     ClickFrom id -> (model, Chrome.highlight id)
 
@@ -83,7 +75,7 @@ view {tabs, tableState, query} =
             Table.view config tableState querriedTabs
             ]
 
-config : Table.Config Tab Msg
+config : Table.Config Ftab Msg
 config =
     Table.customConfig
         { toId = toString << .id

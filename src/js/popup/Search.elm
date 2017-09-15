@@ -4,9 +4,9 @@ import Data exposing (..)
 import Regex exposing (..)
 import List.Extra exposing (..)
 
+{- heuristics search using splitted words from user queries-}
 
-
-search : List Tab -> List String -> List (Tab, Int)
+search : List Ftab -> List String -> List (Ftab, Int)
 search tabs keywords =
   let
     re = caseInsensitive <| regex <| "\\b(" ++ String.join "|" keywords ++ ")"
