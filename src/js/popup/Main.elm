@@ -3,6 +3,7 @@ port module Main exposing (..)
 
 import Html.Attributes exposing (placeholder, id, autofocus)
 import Html.Events exposing (onInput, onClick)
+import List.Extra
 import Html exposing (..)
 import CustomConfig exposing (..)
 import Data exposing (..)
@@ -10,7 +11,6 @@ import Update
 import Table
 import Chrome
 import Search
-import Regex
 
 
 main : Program Never Model Msg
@@ -47,7 +47,7 @@ update msg model =
     None -> (model, Cmd.none)
 
     SetQuery newQuery ->
-      ( { model | query = newQuery }
+      ( { model | query = newQuery, selected = -1 }
       , Cmd.none
       )
 
@@ -68,9 +68,12 @@ update msg model =
       , Chrome.close id
       )
 
-    KeyChangeSelect direction -> Update.keyChangeHandler model direction
+    KeyChangeSelect what -> Update.keyChangeHandler model what
           
-
+    Mouse id ->
+      case List.Extra.findIndex (\t->t.id == id) model.tabs of
+        Just i -> ({model | selected = i}, Cmd.none)
+        Nothing -> model ! []
 
 
 
@@ -78,19 +81,17 @@ update msg model =
 
 -- VIEW
 
-view : Model -> Html Msg
-view {tabs, tableState, query} =
-    let
-      keywords =
-        String.words << String.toLower << Regex.escape <| query
+--indexedMap : (Int -> a -> b) -> List a -> List b
 
-      querriedTabs =
-        List.map Tuple.first <| Search.search tabs keywords
+view : Model -> Html Msg
+view {tabs, tableState, query, selected} =
+    let
+      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected
     in
         div [id "body"]
             [ input [id "searchBox",placeholder "Search"
             , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
-            Table.view config tableState querriedTabs
+            Table.view config tableState selectedTabs
             ]
 
 config : Table.Config Ftab Msg

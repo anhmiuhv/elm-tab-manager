@@ -1,4 +1,4 @@
-module Search exposing (..)
+module Search exposing (queryToListTab)
 
 import Data exposing (..)
 import Regex exposing (..)
@@ -15,3 +15,20 @@ search tabs keywords =
     tup = zip tabs indexes
   in
     List.filter (((/=) 0) << Tuple.second) tup
+
+{- produce a querried list of tabs using model-}
+queryToListTab : Model -> List Ftab
+queryToListTab model = 
+    let
+        keywords =
+          String.words << String.toLower << Regex.escape <| model.query
+
+        querriedTabs =
+           search model.tabs keywords
+              |> List.map Tuple.first
+        selectTab : Int -> Ftab -> Ftab
+        selectTab index tab = if (index == model.selected % List.length querriedTabs) then
+                                {tab | selected = True}
+                             else
+                                {tab | selected = False}
+    in List.indexedMap selectTab querriedTabs

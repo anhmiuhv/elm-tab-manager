@@ -1,13 +1,13 @@
 module CustomConfig exposing (..)
 import Html exposing (i, div)
 import Html.Attributes exposing (id, class, attribute)
-import Html.Events exposing (onClick, keyCode, onWithOptions, defaultOptions)
+import Html.Events exposing (onClick, keyCode, onWithOptions, defaultOptions, onMouseEnter, onMouseLeave)
 import Table exposing (defaultCustomizations)
 import Json.Decode as Json
 import Data exposing (..)
 
 -- remove thead, otherwise use popup.sass for design
-customizations : Table.Customizations Ftab msg
+customizations : Table.Customizations Ftab Msg
 customizations =
     {
         tableAttrs = defaultCustomizations.tableAttrs
@@ -60,12 +60,16 @@ clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ Html.text (pret
 
 selectedId = "selected"
 
-highlightSelectedRow: Ftab -> List (Html.Attribute msg)
+highlightSelectedRow: Ftab -> List (Html.Attribute Msg)
 highlightSelectedRow tab =
-    if (tab.selected) then
-      [id selectedId]
-    else
-      []
+    let 
+      one = if (tab.selected) then
+        [id selectedId]
+      else
+        []
+    in 
+    List.append [onMouseEnter <| Mouse tab.id
+                , onMouseLeave <| Mouse tab.id] one
 
 onKeyUp : (Int -> msg) -> Html.Attribute msg
 onKeyUp tagger =
@@ -76,4 +80,5 @@ emmitUpDown keyCode =
   case keyCode of
     38 -> KeyChangeSelect Up
     40 -> KeyChangeSelect Down
+    13 -> KeyChangeSelect Enter
     _ -> None

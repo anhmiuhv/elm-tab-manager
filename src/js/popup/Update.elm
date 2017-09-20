@@ -3,26 +3,21 @@
 module Update exposing (..)
 
 import Data exposing (..)
-import List.Extra exposing (updateIfIndex, (!!), updateAt)
+import List.Extra exposing (find)
 import Chrome
+import Search
 
-keyChangeHandler : Model -> Direction -> (Model, Cmd Msg) 
-keyChangeHandler model direction =
+keyChangeHandler : Model -> What -> (Model, Cmd Msg) 
+keyChangeHandler model what =
         let
             sel = model.selected
-            len = List.length model.tabs
 
-            changeSelectedPropTo : Bool -> Ftab -> Ftab
-            changeSelectedPropTo bool = \t -> {t | selected = False}
-            
-            selectAnother i = model.tabs
-                                |> updateIfIndex ((==) sel) (changeSelectedPropTo False)
-                                |> updateIfIndex ((==) <| (sel - i) % len) (changeSelectedPropTo True)
-              
-          in case direction of
-              Up -> ({ model | selected = (sel- 1) % len,
-                               tabs = selectAnother 1
-                               }, Chrome.scrolTo 1)
-              Down -> ({model | selected = (sel + 1) % len,
-                               tabs = selectAnother -1
-                               }, Chrome.scrolTo 1)
+          in case what of
+              Up -> ({ model | selected = sel- 1}, Chrome.scrolTo 1)
+              Down -> ({model | selected = sel + 1}, Chrome.scrolTo 1)
+              Enter ->
+                let
+                   selectedTabs =  Search.queryToListTab model
+                in case find (\x -> x.selected) selectedTabs of
+                  Just t -> (model, Chrome.highlight t.id)
+                  Nothing -> (model, Cmd.none)

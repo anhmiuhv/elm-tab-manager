@@ -35,8 +35,16 @@ app.ports.close.subscribe((s) => {
 app.ports.scrolTo.subscribe((s) => {
     $(() => {
         const dest = $('#selected')
-        $(window).scrollTop(dest.offset().top + dest.outerHeight(true) - $(window).height())
-    });
-    
-
+        if (!isScrolledIntoView("#selected"))
+            $(window).scrollTop(dest.offset().top + dest.outerHeight(true) - $(window).height())
+    })
 })
+
+const isScrolledIntoView = (elem) =>
+{
+    const docViewTop = $(window).scrollTop()
+    const docViewBottom = docViewTop + $(window).height()
+    const elemTop = $(elem).offset().top
+    const elemBottom = elemTop + $(elem).height()
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop))
+}

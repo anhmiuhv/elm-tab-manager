@@ -40,14 +40,15 @@ createNameAndId t =
     id = t.id
   }
 
-type Direction = Up | Down
+type What = Up | Down | Enter
 type Msg
   = SetQuery String
   | SetTableState Table.State
   | AllTabs (List Tab)
   | ClickFrom Int
   | CloseFrom Int
-  | KeyChangeSelect Direction
+  | KeyChangeSelect What
+  | Mouse Int
   | None
 
 -- Helper function for creating types
