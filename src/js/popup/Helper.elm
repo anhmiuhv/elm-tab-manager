@@ -3,6 +3,7 @@ module Helper exposing (analyseURL)
 import Dict exposing (Dict)
 import List.Extra exposing (getAt)
 import Maybe.Extra exposing (join,(?))
+
 import Regex
 {-
 spit out nicely formatted url. 'String' is the URL
@@ -34,3 +35,6 @@ analyseURL url =
                |> List.map (\x -> (x, 1))
                |> Dict.fromList
    in (baseURL, dict)
+
+
+

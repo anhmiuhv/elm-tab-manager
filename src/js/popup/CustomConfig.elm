@@ -1,12 +1,13 @@
 module CustomConfig exposing (..)
 import Html exposing (i, div)
 import Html.Attributes exposing (class, attribute)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, keyCode, on)
 import Table exposing (defaultCustomizations)
+import Json.Decode as Json
 import Data exposing (..)
 
 -- remove thead, otherwise use popup.sass for design
-customizations : Table.Customizations data msg
+customizations : Table.Customizations Ftab msg
 customizations =
     {
         tableAttrs = defaultCustomizations.tableAttrs
@@ -14,10 +15,9 @@ customizations =
       , thead = \_ -> Table.HtmlDetails [] []
       , tfoot = defaultCustomizations.tfoot
       , tbodyAttrs = defaultCustomizations.tbodyAttrs
-      , rowAttrs = defaultCustomizations.rowAttrs
+      , rowAttrs = highlightSelectedRow
     }
 
-{-invisible Column-}
 invisibleColumn : String -> (data -> Int) -> Table.Column data msg
 invisibleColumn name toInt =
     Table.customColumn
@@ -27,7 +27,6 @@ invisibleColumn name toInt =
         sorter = Table.increasingOrDecreasingBy toInt
     }
 
-{- delete buttons-}
 deleteButtonColumn: (Int -> msg) -> (data -> Int) -> Table.Column data msg
 deleteButtonColumn msg toIndex =
     Table.veryCustomColumn
@@ -59,5 +58,20 @@ prettyFormat str =
 clickableData : NameAndId -> Table.HtmlDetails Msg
 clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ Html.text (prettyFormat x.name) ]
 
+highlightSelectedRow: Ftab -> List (Html.Attribute msg)
+highlightSelectedRow tab =
+    if (tab.selected) then
+      [class "selected"]
+    else
+      []
 
---$("<i>", {"class": "fa fa-times-circle-o icon-close ", "data-index": index, "aria-hidden": "true"}
+onKeyUp : (Int -> msg) -> Html.Attribute msg
+onKeyUp tagger =
+  on "keyup" (Json.map tagger keyCode)
+
+emmitUpDown : Int -> Msg
+emmitUpDown keyCode = 
+  case keyCode of
+    38 -> KeyChangeSelect Up
+    40 -> KeyChangeSelect Down
+    _ -> None

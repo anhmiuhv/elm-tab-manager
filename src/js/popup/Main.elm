@@ -3,13 +3,15 @@ port module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (placeholder, id)
 import Html.Events exposing (onInput, onClick)
-import CustomConfig exposing (customizations, invisibleColumn, deleteButtonColumn,
-                              clickableData, clickableColumn)
+import CustomConfig exposing (..)
+import Data exposing (..)
+import Maybe.Extra exposing ((?))
+import List.Extra exposing (updateIfIndex, (!!), updateAt)
 import Table
 import Chrome
 import Search
 import Regex
-import Data exposing (..)
+
 
 main : Program Never Model Msg
 main =
@@ -31,6 +33,7 @@ init tbs =
         { tabs = List.map createFtab tbs
             , tableState = Table.initialSort "Index"
             , query = ""
+            , selected = []
         }
     in (model, Chrome.getAllTabs "")
 
@@ -41,6 +44,8 @@ init tbs =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
+    None -> (model, Cmd.none)
+
     SetQuery newQuery ->
       ( { model | query = newQuery }
       , Cmd.none
@@ -50,12 +55,23 @@ update msg model =
       ( { model | tableState = newState }
       , Cmd.none
       )
-
-    AllTabs tabs -> ( Model (List.map createFtab tabs) (Table.initialSort "Index") "", Cmd.none)
+    
+    AllTabs tabs -> ( {model | tabs = (List.map createFtab tabs), query = ""} , Cmd.none)
 
     ClickFrom id -> (model, Chrome.highlight id)
 
     CloseFrom id -> ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }, Chrome.close id)
+
+    KeyChangeSelect direction -> 
+          let 
+            sel = List.head model.selected ? 0
+            selectAnother i = model.tabs
+                                |> updateIfIndex ((==) sel) (\t -> {t | selected = False })
+                                |> updateIfIndex ((==) <| sel - i) (\t -> {t | selected = True})
+          in case direction of
+              Up -> ({ model | selected = updateAt 0 (\x -> x -1) model.selected ? [0],
+                               tabs = selectAnother 1 }, Cmd.none)
+              Down -> (model, Cmd.none)
 
 
 
@@ -70,7 +86,7 @@ view {tabs, tableState, query} =
       querriedTabs =
         List.map Tuple.first <| Search.search tabs keywords
     in
-        div [id "body"]
+        div [id "body", onKeyUp emmitUpDown]
             [ input [id "searchBox",placeholder "Search", onInput SetQuery] [],
             Table.view config tableState querriedTabs
             ]
