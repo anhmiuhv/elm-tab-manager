@@ -31,10 +31,12 @@ table
 
 
 td
-  padding: 10px 10px
+  padding: 5px 10px
   border-bottom: 1px solid $bottomBorderColor
   text-align: justify
   position: relative
+  &.veryEmpty
+    padding: 0px
 
 
 tr
@@ -50,8 +52,7 @@ tr
   align-items: center
   justify-content: center
   flex-direction: row
-  &:hover
-    background-color: $closeHoverColor
+  
 
 
 
@@ -62,5 +63,32 @@ tr
   justify-content: center
   align-items: center
 
-#selected
+.icon-container
+  height: calc(100% - 10px)
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: row
+  margin-right: 2px
+  padding: 0px 3px
+  
+=row
   background-color: $onHoverColor
+
+.smallRow
+  padding: 5px 0px 5px 5px
+  margin-right: -10px
+  margin-left: -5px
+
+#selected .smallRow
+  +row
+  border-radius: 2px 0px 0px 2px
+
+
+#selected .close .icon-container
+  +row
+  border-radius: 0px 2px 2px 0px
+  &:hover
+    background-color: $closeHoverColor
+

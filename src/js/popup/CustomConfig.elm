@@ -20,10 +20,10 @@ customizations =
 
 invisibleColumn : String -> (data -> Int) -> Table.Column data msg
 invisibleColumn name toInt =
-    Table.customColumn
+    Table.veryCustomColumn
     {
         name = name,
-        viewData = \_ -> "",
+        viewData = \_ -> Table.HtmlDetails [class "veryEmpty"] [],
         sorter = Table.increasingOrDecreasingBy toInt
     }
 
@@ -33,7 +33,7 @@ deleteButtonColumn msg toIndex =
     {
       name = "delete",
       viewData = \x -> Table.HtmlDetails [onClick << msg << toIndex <| x ] [div [class "close"] [
-          i [class "fa fa-times-circle-o icon-close", attribute "aria-hidden" "true"][]]],
+          div [class "icon-container"] [i [class "fa fa-times-circle-o icon-close", attribute "aria-hidden" "true"][]]]],
       sorter = Table.unsortable
     }
 
@@ -56,7 +56,7 @@ prettyFormat str =
     String.left 53 str ++ "..."
 
 clickableData : NameAndId -> Table.HtmlDetails Msg
-clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ Html.text (prettyFormat x.name) ]
+clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ div [class "smallRow"] [Html.text (prettyFormat x.name)] ]
 
 selectedId = "selected"
 
