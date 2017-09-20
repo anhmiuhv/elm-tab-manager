@@ -13,7 +13,7 @@ type alias Model =
     tabs : List Ftab
     , tableState : Table.State
     , query : String
-    , selected : List Int
+    , selected : Int
     }
 
 type alias Tab =

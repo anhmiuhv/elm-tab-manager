@@ -12,3 +12,6 @@ port highlight : Int -> Cmd msg
 
 -- close a tab. 'Int' is tabId
 port close : Int -> Cmd msg
+
+--scroll to selected
+port scrolTo : Int -> Cmd msg

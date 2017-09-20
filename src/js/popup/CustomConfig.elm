@@ -1,7 +1,7 @@
 module CustomConfig exposing (..)
 import Html exposing (i, div)
-import Html.Attributes exposing (class, attribute)
-import Html.Events exposing (onClick, keyCode, on)
+import Html.Attributes exposing (id, class, attribute)
+import Html.Events exposing (onClick, keyCode, onWithOptions, defaultOptions)
 import Table exposing (defaultCustomizations)
 import Json.Decode as Json
 import Data exposing (..)
@@ -58,16 +58,18 @@ prettyFormat str =
 clickableData : NameAndId -> Table.HtmlDetails Msg
 clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ Html.text (prettyFormat x.name) ]
 
+selectedId = "selected"
+
 highlightSelectedRow: Ftab -> List (Html.Attribute msg)
 highlightSelectedRow tab =
     if (tab.selected) then
-      [class "selected"]
+      [id selectedId]
     else
       []
 
 onKeyUp : (Int -> msg) -> Html.Attribute msg
 onKeyUp tagger =
-  on "keyup" (Json.map tagger keyCode)
+  onWithOptions "keyup" {defaultOptions | preventDefault = True} (Json.map tagger keyCode)
 
 emmitUpDown : Int -> Msg
 emmitUpDown keyCode = 

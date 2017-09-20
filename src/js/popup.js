@@ -1,5 +1,6 @@
-import "../css/popup.sass";
-const Elm = require("./popup/Main.elm")
+import "../css/popup.sass"
+import $ from 'jquery'
+import Elm from "./popup/Main.elm"
 
 const mountPoint = document.getElementById("elm-mount")
 const app = Elm.Main.embed(mountPoint)
@@ -23,10 +24,19 @@ app.ports.getAllTabs.subscribe((s) => {
 app.ports.highlight.subscribe((s) => {
     chrome.tabs.get(s, (t) => {
       chrome.tabs.highlight({tabs:t.index})
-    })
+  })
 
 })
 
 app.ports.close.subscribe((s) => {
     chrome.tabs.remove (s)
+})
+
+app.ports.scrolTo.subscribe((s) => {
+    $(() => {
+        const dest = $('#selected')
+        $(window).scrollTop(dest.offset().top + dest.outerHeight(true) - $(window).height())
+    });
+    
+
 })

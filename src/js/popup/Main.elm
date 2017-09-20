@@ -1,12 +1,12 @@
 port module Main exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (placeholder, id)
+
+import Html.Attributes exposing (placeholder, id, autofocus)
 import Html.Events exposing (onInput, onClick)
+import Html exposing (..)
 import CustomConfig exposing (..)
 import Data exposing (..)
-import Maybe.Extra exposing ((?))
-import List.Extra exposing (updateIfIndex, (!!), updateAt)
+import Update
 import Table
 import Chrome
 import Search
@@ -33,7 +33,7 @@ init tbs =
         { tabs = List.map createFtab tbs
             , tableState = Table.initialSort "Index"
             , query = ""
-            , selected = []
+            , selected = -1
         }
     in (model, Chrome.getAllTabs "")
 
@@ -56,22 +56,23 @@ update msg model =
       , Cmd.none
       )
     
-    AllTabs tabs -> ( {model | tabs = (List.map createFtab tabs), query = ""} , Cmd.none)
+    AllTabs tabs -> 
+      ( {model | tabs = (List.map createFtab tabs), query = ""} 
+      , Cmd.none
+      )
 
     ClickFrom id -> (model, Chrome.highlight id)
 
-    CloseFrom id -> ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }, Chrome.close id)
+    CloseFrom id -> 
+      ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }
+      , Chrome.close id
+      )
 
-    KeyChangeSelect direction -> 
-          let 
-            sel = List.head model.selected ? 0
-            selectAnother i = model.tabs
-                                |> updateIfIndex ((==) sel) (\t -> {t | selected = False })
-                                |> updateIfIndex ((==) <| sel - i) (\t -> {t | selected = True})
-          in case direction of
-              Up -> ({ model | selected = updateAt 0 (\x -> x -1) model.selected ? [0],
-                               tabs = selectAnother 1 }, Cmd.none)
-              Down -> (model, Cmd.none)
+    KeyChangeSelect direction -> Update.keyChangeHandler model direction
+          
+
+
+
 
 
 
@@ -86,8 +87,9 @@ view {tabs, tableState, query} =
       querriedTabs =
         List.map Tuple.first <| Search.search tabs keywords
     in
-        div [id "body", onKeyUp emmitUpDown]
-            [ input [id "searchBox",placeholder "Search", onInput SetQuery] [],
+        div [id "body"]
+            [ input [id "searchBox",placeholder "Search"
+            , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
             Table.view config tableState querriedTabs
             ]
 
