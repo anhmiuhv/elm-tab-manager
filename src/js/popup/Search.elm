@@ -9,7 +9,9 @@ import List.Extra exposing (..)
 search : List Ftab -> List String -> List (Ftab, Int)
 search tabs keywords =
   let
-    re = caseInsensitive <| regex <| "\\b(" ++ String.join "|" keywords ++ ")"
+    re = "\\b(" ++ String.join "|" keywords ++ ")"
+            |> regex 
+            |> caseInsensitive  
     countMatches = List.length << Regex.find All re << .name
     indexes = List.map countMatches tabs
     tup = zip tabs indexes
@@ -25,6 +27,7 @@ queryToListTab model =
 
         querriedTabs =
            search model.tabs keywords
+              |> List.map (\(t, i) -> ({t | index = -i}, i))
               |> List.map Tuple.first
         selectTab : Int -> Ftab -> Ftab
         selectTab index tab = if (index == model.selected % List.length querriedTabs) then

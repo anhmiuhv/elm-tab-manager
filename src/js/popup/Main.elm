@@ -81,8 +81,6 @@ update msg model =
 
 -- VIEW
 
---indexedMap : (Int -> a -> b) -> List a -> List b
-
 view : Model -> Html Msg
 view {tabs, tableState, query, selected} =
     let
