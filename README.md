@@ -4,7 +4,7 @@ An Chrome Extension written in Elm-lang
 
 better tab management for chrome
 
-###Features
+### Features
 
 * Searching through tabs
 * Filtering untouched tabs
