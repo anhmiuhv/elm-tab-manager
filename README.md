@@ -1,4 +1,14 @@
-#  elm-tab-manager
+# elm-manage-tab (Chrome Extensions)
 
-A tab manager written in Elm...
-To be continue
+An Chrome Extension written in Elm-lang
+
+better tab management for chrome
+
+###Features
+
+* Searching through tabs
+* Filtering untouched tabs
+* Close tabs
+
+
+<image src="https://raw.githubusercontent.com/anhmiuhv/elm-tab-manager/master/static/gif.gif" width ="270"/>
