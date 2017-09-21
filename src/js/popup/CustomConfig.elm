@@ -24,7 +24,7 @@ invisibleColumn name toInt =
     {
         name = name,
         viewData = \_ -> Table.HtmlDetails [class "veryEmpty"] [],
-        sorter = Table.increasingOrDecreasingBy toInt
+        sorter = Table.unsortable
     }
 
 deleteButtonColumn: (Int -> msg) -> (data -> Int) -> Table.Column data msg
@@ -58,6 +58,7 @@ prettyFormat str =
 clickableData : NameAndId -> Table.HtmlDetails Msg
 clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ div [class "smallRow"] [Html.text (prettyFormat x.name)] ]
 
+selectedId : String
 selectedId = "selected"
 
 highlightSelectedRow: Ftab -> List (Html.Attribute Msg)
@@ -68,8 +69,8 @@ highlightSelectedRow tab =
       else
         []
     in 
-    List.append [onMouseEnter <| Mouse tab.id
-                , onMouseLeave <| Mouse tab.id] one
+    List.append [onMouseEnter <| MouseIn tab.id
+                , onMouseLeave <| Deselect tab.id] one
 
 onKeyUp : (Int -> msg) -> Html.Attribute msg
 onKeyUp tagger =

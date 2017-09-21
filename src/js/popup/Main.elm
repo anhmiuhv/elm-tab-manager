@@ -34,6 +34,7 @@ init tbs =
             , tableState = Table.initialSort "Index"
             , query = ""
             , selected = -1
+            , deselect = -1
         }
     in (model, Chrome.getAllTabs "")
 
@@ -68,11 +69,16 @@ update msg model =
       , Chrome.close id
       )
 
-    KeyChangeSelect what -> Update.keyChangeHandler model what
+    KeyChangeSelect what -> Update.keyChangeHandler {model | deselect = -1} what
           
-    Mouse id ->
+    MouseIn id ->
       case List.Extra.findIndex (\t->t.id == id) model.tabs of
-        Just i -> ({model | selected = i}, Cmd.none)
+        Just i -> ({model | selected = i, deselect = -1}, Cmd.none)
+        Nothing -> model ! []
+
+    Deselect id ->
+      case List.Extra.findIndex (\t->t.id == id) model.tabs of
+        Just i -> ({model | deselect = i}, Cmd.none)
         Nothing -> model ! []
 
 
@@ -82,9 +88,9 @@ update msg model =
 -- VIEW
 
 view : Model -> Html Msg
-view {tabs, tableState, query, selected} =
+view {tabs, tableState, query, selected, deselect} =
     let
-      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected
+      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected deselect
     in
         div [id "body"]
             [ input [id "searchBox",placeholder "Search"

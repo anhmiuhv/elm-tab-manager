@@ -14,6 +14,7 @@ type alias Model =
     , tableState : Table.State
     , query : String
     , selected : Int
+    , deselect : Int
     }
 
 type alias Tab =
@@ -48,7 +49,8 @@ type Msg
   | ClickFrom Int
   | CloseFrom Int
   | KeyChangeSelect What
-  | Mouse Int
+  | MouseIn Int
+  | Deselect Int
   | None
 
 -- Helper function for creating types

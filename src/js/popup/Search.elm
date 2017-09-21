@@ -26,12 +26,14 @@ queryToListTab model =
           String.words << String.toLower << Regex.escape <| model.query
 
         querriedTabs =
-           search model.tabs keywords
-              |> List.map (\(t, i) -> ({t | index = -i}, i))
-              |> List.map Tuple.first
+            if model.query == "" then model.tabs
+            else
+               search model.tabs keywords
+                  |> List.map (\(t, i) -> ({t | index = -i}, i))
+                  |> List.map Tuple.first
         selectTab : Int -> Ftab -> Ftab
-        selectTab index tab = if (index == model.selected % List.length querriedTabs) then
+        selectTab index tab =  if (index == model.selected % List.length querriedTabs) && (index /= model.deselect) then
                                 {tab | selected = True}
                              else
                                 {tab | selected = False}
-    in List.indexedMap selectTab querriedTabs
+    in List.indexedMap selectTab <| List.sortBy .index querriedTabs
