@@ -6,6 +6,18 @@ $bottomBorderColor: #848484
 $onHoverColor: #ABABC6
 $paddingForRow: 10px
 
+=row
+  background-color: $onHoverColor
+
+=body
+  background-color: #f2f0ee
+  margin-right: 4px
+
+
+
+html
+
+
 #searchBox
   width: 250px
   display: flex
@@ -13,11 +25,14 @@ $paddingForRow: 10px
   border: 2px solid $onHoverColor
   border-radius: 3px
   flex: auto
-  margin: 0px 10px 0px 10px
+  margin: -3px 10px 0px 10px
+  box-shadow: 0 6px 2px -6px black
   padding: 5px 5px
   box-sizing: border-box
   resize: none
   font-size: 120%
+  &:focus
+    outline-width: 0
 
 @font-face
   font-family: "SanFrancissco"
@@ -29,6 +44,7 @@ table
   border-collapse: collapse
   width: 90%
   font: 120% "SanFrancissco";
+  +body
 
 
 td
@@ -56,7 +72,8 @@ tr
   
 
 #body
-  background-color: white
+  +body
+  border-radius: 10px
   display: flex
   flex-direction: column
   justify-content: center
@@ -71,23 +88,19 @@ tr
   flex-direction: row
   margin-right: 2px
   padding: 0px 3px
-  
-=row
-  background-color: $onHoverColor
 
 .smallRow
-  padding: 5px 3px 5px 5px
+  padding: 5px 8px 5px 5px
   margin-right: -10px
   margin-left: -5px
 
-#selected .smallRow
-  +row
-  border-radius: 2px 0px 0px 2px
-
-
-#selected .close .icon-container
-  +row
-  border-radius: 0px 2px 2px 0px
-  &:hover
-    background-color: $closeHoverColor
+#selected 
+  & .smallRow
+    +row
+    border-radius: 2px 0px 0px 2px
+  & .close .icon-container
+    +row
+    border-radius: 0px 2px 2px 0px
+    &:hover
+      background-color: $closeHoverColor
 
