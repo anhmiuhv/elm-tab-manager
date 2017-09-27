@@ -1,7 +1,7 @@
 port module Main exposing (..)
 
 
-import Html.Attributes exposing (placeholder, id, autofocus)
+import Html.Attributes exposing (placeholder, id, autofocus, class)
 import Html.Events exposing (onInput, onClick)
 import List.Extra
 import Html exposing (..)
@@ -11,6 +11,7 @@ import Update
 import Table
 import Chrome
 import Search
+import Dropdown
 
 
 main : Program Never Model Msg
@@ -93,7 +94,8 @@ view {tabs, tableState, query, selected, deselect} =
       selectedTabs = Search.queryToListTab <| Model tabs tableState query selected deselect
     in
         div [id "body"]
-            [ input [id "searchBox",placeholder "Search"
+            [ div [class "dropdown-container"] [Dropdown.dropdown]
+            , input [id "searchBox",placeholder "Search"
             , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
             Table.view config tableState selectedTabs
             ]
