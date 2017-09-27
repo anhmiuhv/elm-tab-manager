@@ -5,6 +5,7 @@ import Elm from "./popup/Main.elm"
 const mountPoint = document.getElementById("elm-mount")
 const app = Elm.Main.embed(mountPoint)
 
+
 // get tabs ports
 app.ports.getAllTabs.subscribe((s) => {
     chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (ts) => {
@@ -37,8 +38,11 @@ app.ports.scrolTo.subscribe((s) => {
         const dest = $('#selected')
         if (!isScrolledIntoView("#selected"))
             $(window).scrollTop(dest.offset().top + dest.outerHeight(true) - $(window).height())
+
     })
 })
+
+
 
 const isScrolledIntoView = (elem) =>
 {

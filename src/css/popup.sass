@@ -13,7 +13,8 @@ $paddingForRow: 10px
   background-color: #F7F2E4
 
 
-html
+body
+  margin-top: -10px
 
 
 #searchBox
@@ -56,6 +57,8 @@ td
 
 tr
   margin-top: 3px
+  &:last-child td
+    border-bottom: 0px
 
 .close
   width: 100%
@@ -105,9 +108,14 @@ tr
 
 .dropdown-content 
   display: none
+  background-color: white
   position: absolute
   min-width: 160px
   z-index: 1
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+  & p
+    -webkit-margin-before: 0px
 
 
 .dropdown
