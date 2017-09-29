@@ -7,7 +7,7 @@ better tab management for chrome
 ### Features
 
 * Searching through tabs
-* Filtering untouched tabs
+* Filtering untouched tabs, close duplicates
 * Close tabs
 
 
