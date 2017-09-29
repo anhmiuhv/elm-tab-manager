@@ -5,12 +5,13 @@ $closeHoverColor: #BE5656
 $bottomBorderColor: #848484
 $onHoverColor: #ABABC6
 $paddingForRow: 10px
+$mainColor: #F7F2E4
 
 =row
   background-color: $onHoverColor
 
 =body
-  background-color: #F7F2E4
+  background-color: $mainColor
 
 
 body
@@ -107,21 +108,40 @@ tr
       background-color: $closeHoverColor
 
 .dropdown-content 
+  top: 0px
   display: none
   background-color: white
   position: absolute
   min-width: 160px
   z-index: 1
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  flex-direction: column
+  justify-content: center
+  align-items: center
 
-  & p
-    -webkit-margin-before: 0px
 
 
 .dropdown
   font-size: 120%
+  position: relative
   &:hover .dropdown-content
-    display: block
+    display: flex
+    border-radius: 5px
+  & span
+    font-weight: 700
+  & p
+    position: relative
+    &:after
+      content: ''
+      position: absolute
+      top: 100%
+      left: 0%
+      width: 0%
+      border-bottom: 2px solid #A09577
+      transition: 0.4s
+    &:hover:after
+      width: 100%  
+
 
 .dropdown-container
   padding: 10px

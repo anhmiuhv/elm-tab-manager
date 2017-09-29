@@ -1,7 +1,9 @@
 module Data exposing (..)
 import Table
 import Helper
-import Dict exposing (Dict)
+import Dict exposing (Dict, fromList, keys)
+import Focus
+import Set exposing (Set)
 
 type alias URLparsed = {
   baseURL : String ,
@@ -15,6 +17,7 @@ type alias Model =
     , query : String
     , selected : Int
     , deselect : Int
+    , multiSel : (Bool, Set Int)
     }
 
 type alias Tab =
@@ -51,6 +54,8 @@ type Msg
   | KeyChangeSelect What
   | MouseIn Int
   | Deselect Int
+  | RemoveDuplicate
+  | MultiSel
   | None
 
 -- Helper function for creating types
@@ -66,3 +71,47 @@ type alias NameAndId = {
   name: String,
   id: Int
 }
+
+reconstructUnique: Ftab -> String
+reconstructUnique ft = ft.name ++ ft.baseUrl ++ List.foldl (++) "" (keys ft.urlKeywords)
+ 
+-- first list of the tuple is the remove list
+removeDuplicate : List Ftab -> (List Ftab ,List Ftab)
+removeDuplicate a = removeRecus a [] Dict.empty
+            
+removeRecus : List Ftab -> List Ftab -> Dict String Ftab -> (List Ftab, List Ftab)
+removeRecus list rem dict = 
+  case list of
+    [] -> (rem, Dict.values dict)
+    first :: remain -> 
+      let
+        unq = reconstructUnique first
+        bol = Dict.member unq dict
+        newr = if bol then first :: rem
+            else rem
+        newd = if bol then dict
+            else Dict.insert unq first dict
+      in removeRecus remain newr newd
+
+multiSelSet : Focus.Focus Model (Set Int)
+multiSelSet = 
+  let
+    update : (Set Int -> Set Int) -> Model -> Model
+    update fun model = {model | multiSel = (Tuple.first model.multiSel
+                                            , model.multiSel
+                                                |> Tuple.second 
+                                                |> fun )}
+      
+  in
+    Focus.create (\x -> Tuple.second x.multiSel) update
+
+multiSelBol : Focus.Focus Model Bool
+multiSelBol =
+  let
+    update : (Bool -> Bool) -> Model -> Model
+    update fun model = {model | multiSel = (model.multiSel
+                                              |> Tuple.first 
+                                              |> fun
+                                            , Set.empty)}
+  in
+    Focus.create (\x->Tuple.first x.multiSel) update

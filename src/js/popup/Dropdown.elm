@@ -3,9 +3,10 @@ module Dropdown exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onInput, onClick)
 import Html exposing (..)
-
-dropdown : Html msg
+import Data exposing (..)
+dropdown : Html Msg
 dropdown = div [class "dropdown"]
-            [span [] [text "Edit"]
-            , div [class "dropdown-content"] [p [] [text "Remove duplicate..."]]
+            [span [] [text "Option"]
+            , div [class "dropdown-content"] [p [onClick RemoveDuplicate] [text "Remove duplicate..."]
+                                            , p [onClick MultiSel] [text "Multi Select on..."]]
             ]

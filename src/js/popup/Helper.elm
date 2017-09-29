@@ -1,8 +1,9 @@
-module Helper exposing (analyseURL)
+module Helper exposing (analyseURL, maybeInsert)
 
 import Dict exposing (Dict)
 import List.Extra exposing (getAt)
 import Maybe.Extra exposing (join,(?))
+import Set exposing (Set)
 
 import Regex
 {-
@@ -36,5 +37,6 @@ analyseURL url =
                |> Dict.fromList
    in (baseURL, dict)
 
-
-
+maybeInsert : Int -> Set Int -> Set Int
+maybeInsert i s = if (Set.member i s) then Set.remove i s
+                  else Set.insert i s

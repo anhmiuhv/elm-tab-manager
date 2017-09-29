@@ -42,6 +42,9 @@ app.ports.scrolTo.subscribe((s) => {
     })
 })
 
+app.ports.closeMany.subscribe((l) => {
+    chrome.tabs.remove(l)
+})
 
 
 const isScrolledIntoView = (elem) =>

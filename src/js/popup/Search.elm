@@ -3,6 +3,8 @@ module Search exposing (queryToListTab)
 import Data exposing (..)
 import Regex exposing (..)
 import List.Extra exposing (..)
+import Focus
+import Set
 
 {- heuristics search using splitted words from user queries-}
 
@@ -24,7 +26,7 @@ queryToListTab model =
     let
         keywords =
           String.words << String.toLower << Regex.escape <| model.query
-
+        multi = Focus.get multiSelSet model
         querriedTabs =
             if model.query == "" then model.tabs
             else
@@ -32,8 +34,9 @@ queryToListTab model =
                   |> List.map (\(t, i) -> ({t | index = -i}, i))
                   |> List.map Tuple.first
         selectTab : Int -> Ftab -> Ftab
-        selectTab index tab =  if (index == model.selected % List.length querriedTabs) && (index /= model.deselect) then
-                                {tab | selected = True}
-                             else
-                                {tab | selected = False}
+        selectTab index tab = {tab | selected = (Set.member tab.id multi) ||
+                                    ((index == model.selected % List.length querriedTabs) 
+                                    && (index /= model.deselect))}
+                             
+        
     in List.indexedMap selectTab <| List.sortBy .index querriedTabs

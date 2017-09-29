@@ -15,3 +15,6 @@ port close : Int -> Cmd msg
 
 --scroll to selected
 port scrolTo : Int -> Cmd msg
+
+--close many tabs
+port closeMany : List Int -> Cmd msg

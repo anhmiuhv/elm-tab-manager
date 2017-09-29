@@ -7,10 +7,13 @@ import List.Extra
 import Html exposing (..)
 import CustomConfig exposing (..)
 import Data exposing (..)
+import Helper exposing (..)
 import Update
 import Table
 import Chrome
 import Search
+import Focus
+import Set
 import Dropdown
 
 
@@ -36,6 +39,7 @@ init tbs =
             , query = ""
             , selected = -1
             , deselect = -1
+            , multiSel = (False, Set.empty)
         }
     in (model, Chrome.getAllTabs "")
 
@@ -47,30 +51,15 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     None -> (model, Cmd.none)
-
-    SetQuery newQuery ->
-      ( { model | query = newQuery, selected = -1 }
-      , Cmd.none
-      )
-
-    SetTableState newState ->
-      ( { model | tableState = newState }
-      , Cmd.none
-      )
-    
-    AllTabs tabs -> 
-      ( {model | tabs = (List.map createFtab tabs), query = ""} 
-      , Cmd.none
-      )
-
-    ClickFrom id -> (model, Chrome.highlight id)
-
-    CloseFrom id -> 
-      ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }
-      , Chrome.close id
-      )
-
+    SetQuery newQuery -> Update.setQueryHandler newQuery model
+    SetTableState newState -> Update.setTableStateHandler newState model
+    AllTabs tabs -> Update.allTabsHandler tabs model
     KeyChangeSelect what -> Update.keyChangeHandler {model | deselect = -1} what
+    RemoveDuplicate -> Update.removeDupHandler model
+    CloseFrom id -> Update.closeFromHandler id model
+    MultiSel -> Focus.update multiSelBol not model ! []
+    ClickFrom id -> if not <| Focus.get multiSelBol model then (model, Chrome.highlight id)
+                    else Focus.update multiSelSet (maybeInsert id) model ! []
           
     MouseIn id ->
       case List.Extra.findIndex (\t->t.id == id) model.tabs of
@@ -89,9 +78,9 @@ update msg model =
 -- VIEW
 
 view : Model -> Html Msg
-view {tabs, tableState, query, selected, deselect} =
+view {tabs, tableState, query, selected, deselect, multiSel} =
     let
-      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected deselect
+      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected deselect multiSel
     in
         div [id "body"]
             [ div [class "dropdown-container"] [Dropdown.dropdown]
