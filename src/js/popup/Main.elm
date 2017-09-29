@@ -55,7 +55,8 @@ update msg model =
     SetTableState newState -> Update.setTableStateHandler newState model
     AllTabs tabs -> Update.allTabsHandler tabs model
     KeyChangeSelect what -> Update.keyChangeHandler {model | deselect = -1} what
-    RemoveDuplicate -> Update.removeDupHandler model
+    RemoveDuplicate -> if Focus.get multiSelBol model then model ! [] 
+                        else Update.removeDupHandler model
     CloseFrom id -> Update.closeFromHandler id model
     MultiSel -> Focus.update multiSelBol not model ! []
     ClickFrom id -> if not <| Focus.get multiSelBol model then (model, Chrome.highlight id)
@@ -71,6 +72,8 @@ update msg model =
         Just i -> ({model | deselect = i}, Cmd.none)
         Nothing -> model ! []
 
+    CloseSelected -> Update.closeSelectedHandler model
+
 
 
 
@@ -80,10 +83,12 @@ update msg model =
 view : Model -> Html Msg
 view {tabs, tableState, query, selected, deselect, multiSel} =
     let
-      selectedTabs = Search.queryToListTab <| Model tabs tableState query selected deselect multiSel
+      model = Model tabs tableState query selected deselect multiSel
+      selectedTabs = Search.queryToListTab model
+      
     in
         div [id "body"]
-            [ div [class "dropdown-container"] [Dropdown.dropdown]
+            [ div [class "dropdown-container"] (Dropdown.dropdown model)
             , input [id "searchBox",placeholder "Search"
             , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
             Table.view config tableState selectedTabs

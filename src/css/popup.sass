@@ -118,7 +118,11 @@ tr
   justify-content: center
   align-items: center
 
-
+=dropdown
+  font-weight: 700
+.filter
+  font-size: 120%
+  +dropdown
 
 .dropdown
   font-size: 120%
@@ -127,7 +131,7 @@ tr
     display: flex
     border-radius: 5px
   & span
-    font-weight: 700
+    +dropdown
   & p
     position: relative
     &:after
@@ -148,3 +152,9 @@ tr
   display: flex
   flex-direction: row
   margin: 0px 5px
+  justify-content: space-between
+  align-items: center
+
+.bigDeleteButton
+  font-size: 150%
+  color: $closeHoverColor

@@ -54,6 +54,7 @@ type Msg
   | KeyChangeSelect What
   | MouseIn Int
   | Deselect Int
+  | CloseSelected
   | RemoveDuplicate
   | MultiSel
   | None

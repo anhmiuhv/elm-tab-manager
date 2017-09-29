@@ -5,8 +5,10 @@ module Update exposing (..)
 import Data exposing (..)
 import List.Extra exposing (find)
 import Chrome
+import Set
 import Table
 import Search
+import Focus
 
 keyChangeHandler : Model -> What -> (Model, Cmd Msg) 
 keyChangeHandler model what =
@@ -27,7 +29,7 @@ removeDupHandler : Model -> (Model, Cmd Msg)
 removeDupHandler model =
     let
       (remList, keepList) = removeDuplicate model.tabs
-    in {model | tabs = keepList} ! [Chrome.closeMany <| Debug.log "list" <| List.map (.id) remList]
+    in {model | tabs = keepList} ! [Chrome.closeMany <| List.map (.id) remList]
 
 setQueryHandler : String -> Model -> (Model , Cmd Msg)
 setQueryHandler newQuery model = 
@@ -52,3 +54,9 @@ closeFromHandler id model =
   ( { model | tabs = List.filter (((/=) id) << .id) model.tabs }
       , Chrome.close id
       )
+
+closeSelectedHandler : Model -> (Model, Cmd Msg)
+closeSelectedHandler model =
+    let
+      closeSet = Focus.get multiSelSet model
+    in ({model | tabs = List.filter (\x->not <| Set.member x.id closeSet) model.tabs},  Chrome.closeMany <| Set.toList closeSet)
