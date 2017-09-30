@@ -4,6 +4,7 @@ import Data exposing (..)
 import Regex exposing (..)
 import List.Extra exposing (..)
 import Focus
+import Dict
 import Set
 
 {- heuristics search using splitted words from user queries-}
@@ -13,10 +14,21 @@ search tabs keywords =
   let
     re = "\\b(" ++ String.join "|" keywords ++ ")"
             |> regex 
-            |> caseInsensitive  
+            |> caseInsensitive 
+    re2 = String.join "" keywords
+            |> regex
+            |> caseInsensitive
     countMatches = List.length << Regex.find All re << .name
-    indexes = List.map countMatches tabs
-    tup = zip tabs indexes
+    countMatches2 = List.length << Regex.find All re2 << .name
+    countMatches3 = List.length << Regex.find All re << String.join " " << Dict.keys << .urlKeywords
+    indexes = List.map (((*) 2) << countMatches) tabs
+    indexes2 = List.map countMatches2 tabs
+    indexes3 = List.map countMatches3 tabs
+    total = (\a b c -> a + b + c)
+              |> flip List.map indexes2
+              |> andMap indexes
+              |> andMap indexes3
+    tup = zip tabs total
   in
     List.filter (((/=) 0) << Tuple.second) tup
 

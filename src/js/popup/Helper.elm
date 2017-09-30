@@ -26,16 +26,21 @@ regexURL = Regex.regex "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*)
 
 analyseURL: String -> (String, Dict String Int)
 analyseURL url =
-   let
-     answer = case List.head <| Regex.find Regex.All regexURL url of
+  let
+    answer = case List.head <| Regex.find Regex.All regexURL url of
                    Just a -> a.submatches
                    Nothing -> []
-     baseURL = (join <| getAt 3 answer) ? ""
-     dict = (join <| getAt 4 answer) ? ""
+    baseURL = (join <| getAt 3 answer) ? ""
+    dict = (join <| getAt 4 answer) ? ""
                |> String.split "/"
                |> List.map (\x -> (x, 1))
                |> Dict.fromList
-   in (baseURL, dict)
+    dict2 = baseURL
+              |> String.words
+              |> List.map (\x -> (x,1))
+              |> Dict.fromList
+
+   in (baseURL, Dict.union dict dict2)
 
 maybeInsert : Int -> Set Int -> Set Int
 maybeInsert i s = if (Set.member i s) then Set.remove i s
