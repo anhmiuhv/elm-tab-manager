@@ -3,6 +3,7 @@
 module Update exposing (..)
 
 import Data exposing (..)
+import Features exposing (..)
 import List.Extra exposing (find)
 import Chrome
 import Set
