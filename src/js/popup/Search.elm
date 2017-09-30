@@ -36,7 +36,9 @@ queryToListTab model =
         selectTab : Int -> Ftab -> Ftab
         selectTab index tab = {tab | selected = (Set.member tab.id multi) ||
                                     ((index == model.selected % List.length querriedTabs) 
-                                    && (index /= model.deselect))}
+                                    && (index /= model.deselect))
+                                    , multiSel = Set.member tab.id multi
+                                  }
                              
         
     in List.indexedMap selectTab <| List.sortBy .index querriedTabs

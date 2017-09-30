@@ -12,8 +12,6 @@ $mainColor: #F7F2E4
 
 =body
   border: 2px solid #a2bbff
-  background-color: $mainColor
-
 
 body
   margin-top: -10px
@@ -97,6 +95,9 @@ tr
   margin-right: -10px
   margin-left: -5px
 
+.multiSel 
+  text-decoration: line-through
+
 #selected 
   & .smallRow
     +row
@@ -146,7 +147,10 @@ tr
     &:hover:after
       width: 100%  
 
-
+.baseUrl
+  font-size: 10px
+  color: gray
+  
 .dropdown-container
   padding: 10px
   width: 260px
@@ -159,3 +163,4 @@ tr
 .bigDeleteButton
   font-size: 150%
   color: $closeHoverColor
+  cursor: pointer

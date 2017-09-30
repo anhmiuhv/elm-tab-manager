@@ -34,14 +34,16 @@ type alias Ftab = {
   index: Int,
   baseUrl: String,
   urlKeywords: Dict String Int,
-  selected: Bool
+  selected: Bool,
+  multiSel: Bool
 }
 
 createNameAndId: Ftab -> NameAndId
 createNameAndId t = 
   {
     name = t.name,
-    id = t.id
+    id = t.id,
+    baseUrl = t.baseUrl
   }
 
 type What = Up | Down | Enter
@@ -65,12 +67,13 @@ createFtab tab =
   let
     analyzed = Helper.analyseURL tab.url
   in
-    Ftab tab.id tab.name tab.index (Tuple.first analyzed) (Tuple.second analyzed) False
+    Ftab tab.id tab.name tab.index (Tuple.first analyzed) (Tuple.second analyzed) False False
 
 
 type alias NameAndId = {
   name: String,
-  id: Int
+  id: Int, 
+  baseUrl: String
 }
 
 reconstructUnique: Ftab -> String

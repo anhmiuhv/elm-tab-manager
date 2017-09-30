@@ -1,5 +1,5 @@
 module CustomConfig exposing (..)
-import Html exposing (i, div)
+import Html exposing (i, div, br, span)
 import Html.Attributes exposing (id, class, attribute)
 import Html.Events exposing (onClick, keyCode, onWithOptions, defaultOptions, onMouseEnter, onMouseLeave)
 import Table exposing (defaultCustomizations)
@@ -56,21 +56,27 @@ prettyFormat str =
     String.left 53 str ++ "..."
 
 clickableData : NameAndId -> Table.HtmlDetails Msg
-clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] [ div [class "smallRow"] [Html.text (prettyFormat x.name)] ]
+clickableData x = Table.HtmlDetails [onClick (ClickFrom x.id)] 
+                                    [ div [class "smallRow"] [Html.text (prettyFormat x.name)
+                                    , br [] []
+                                    , span [class "baseUrl"] [Html.text x.baseUrl]]]
 
 selectedId : String
 selectedId = "selected"
 
+multiSel : String
+multiSel = "multiSel"
+
 highlightSelectedRow: Ftab -> List (Html.Attribute Msg)
 highlightSelectedRow tab =
     let 
-      one = if (tab.selected) then
-        [id selectedId]
-      else
-        []
+      one = if (tab.selected) then [id selectedId]
+            else []
+      two = if (tab.multiSel) then [class multiSel]
+            else [] 
     in 
     List.append [onMouseEnter <| MouseIn tab.id
-                , onMouseLeave <| Deselect tab.id] one
+                , onMouseLeave <| Deselect tab.id] <| one ++ two
 
 onKeyUp : (Int -> msg) -> Html.Attribute msg
 onKeyUp tagger =
