@@ -124,9 +124,6 @@ tr
 
 =dropdown
   font-weight: 700
-.filter
-  font-size: 120%
-  +dropdown
 
 .dropdown
   font-size: 120%
@@ -148,6 +145,12 @@ tr
       transition: 0.4s
     &:hover:after
       width: 100%  
+
+.filter
+  @extend .dropdown
+  & .dropdown-content
+    right: 0%
+  
 
 .baseUrl
   font-size: 10px

@@ -11,6 +11,7 @@ import Helper exposing (..)
 import Update
 import Table
 import Chrome
+import Dict
 import Search
 import Focus
 import Set
@@ -73,6 +74,15 @@ update msg model =
         Nothing -> model ! []
 
     CloseSelected -> Update.closeSelectedHandler model
+    HighlightHist a -> let
+            transform : Ftab -> Ftab
+            transform b = 
+                case Dict.get (toString b.id) a of
+                    Just i -> {b | lastHighlight = i}
+                    _ -> Debug.log "success"  b
+            
+        in      
+            {model | tabs = List.map transform model.tabs } ! []
 
 
 
@@ -103,6 +113,8 @@ config =
             [
             clickableColumn "Name" clickableData createNameAndId
             , invisibleColumn "Index" .index
+            , invisibleColumn "LastHighlight" .lastHighlight
+            , stringInvisibleColumn "BaseURL" .baseUrl
             , deleteButtonColumn CloseFrom .id
             ]
         , customizations = customizations
@@ -113,4 +125,8 @@ config =
 -- SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Chrome.allTabs AllTabs
+    Sub.batch [
+          Chrome.allTabs AllTabs
+          , Chrome.highlightHist (decodeHist >> toHighlightHist)
+          , Chrome.sortSetting (Table.initialSort >> SetTableState )
+          ]

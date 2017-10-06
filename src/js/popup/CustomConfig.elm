@@ -24,7 +24,16 @@ invisibleColumn name toInt =
     {
         name = name,
         viewData = \_ -> Table.HtmlDetails [class "veryEmpty"] [],
-        sorter = Table.unsortable
+        sorter = Table.decreasingBy toInt
+    }
+
+stringInvisibleColumn : String -> (data -> String) -> Table.Column data msg
+stringInvisibleColumn name toStr =
+    Table.veryCustomColumn
+    {
+        name = name,
+        viewData = \_ -> Table.HtmlDetails [class "veryEmpty"] [],
+        sorter = Table.decreasingBy toStr
     }
 
 deleteButtonColumn: (Int -> msg) -> (data -> Int) -> Table.Column data msg

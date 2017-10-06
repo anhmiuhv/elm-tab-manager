@@ -4,10 +4,27 @@ import Elm from "./popup/Main.elm"
 
 const mountPoint = document.getElementById("elm-mount")
 const app = Elm.Main.embed(mountPoint)
+const sortSetting = "lastSort"
+chrome.storage.local.get(sortSetting, (o) => {
+    if(chrome.runtime.lastError)
+    {
+        return;
+    }
+    app.ports.sortSetting.send(o[sortSetting])
 
+})
+
+app.ports.setSort.subscribe((s) => {
+    chrome.storage.local.set({[sortSetting]:s})
+})
 
 // get tabs ports
 app.ports.getAllTabs.subscribe((s) => {
+    chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+        const dictionary = response.dictionary
+        console.log(response);
+        app.ports.highlightHist.send(dictionary)
+    });
     chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (ts) => {
         app.ports.allTabs.send(ts.map((t) => {
             const r = {

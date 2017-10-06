@@ -41,7 +41,7 @@ setQueryHandler newQuery model =
 setTableStateHandler : Table.State -> Model -> (Model, Cmd Msg)
 setTableStateHandler newState model =
   ( { model | tableState = newState }
-      , Cmd.none
+      , Chrome.setSort <| stateHead newState
       )
 
 allTabsHandler : List Tab -> Model -> (Model, Cmd Msg)

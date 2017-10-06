@@ -7,7 +7,9 @@ import Focus
 import Dict
 import Set
 
-{- heuristics search using splitted words from user queries-}
+{- heuristics search using splitted words from user queries
+  2 point for each exact words match for name and url
+  1 point for substring match for name-}
 
 search : List Ftab -> List String -> List (Ftab, Int)
 search tabs keywords =
@@ -32,6 +34,7 @@ search tabs keywords =
   in
     List.filter (((/=) 0) << Tuple.second) tup
 
+
 {- produce a querried list of tabs using model-}
 queryToListTab : Model -> List Ftab
 queryToListTab model = 
@@ -43,7 +46,7 @@ queryToListTab model =
             if model.query == "" then model.tabs
             else
                search model.tabs keywords
-                  |> List.map (\(t, i) -> ({t | index = -i}, i))
+                  |> List.map (\(t, i) -> ({t | index = i}, i))
                   |> List.map Tuple.first
         selectTab : Int -> Ftab -> Ftab
         selectTab index tab = {tab | selected = (Set.member tab.id multi) ||
@@ -53,4 +56,4 @@ queryToListTab model =
                                   }
                              
         
-    in List.indexedMap selectTab <| List.sortBy .index querriedTabs
+    in List.indexedMap selectTab querriedTabs

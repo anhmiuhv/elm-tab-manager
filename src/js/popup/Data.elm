@@ -4,6 +4,8 @@ import Helper
 import Dict exposing (Dict, fromList, keys)
 import Focus
 import Set exposing (Set)
+import Json.Decode as Decode
+
 
 type alias URLparsed = {
   baseURL : String ,
@@ -35,7 +37,8 @@ type alias Ftab = {
   baseUrl: String,
   urlKeywords: Dict String Int,
   selected: Bool,
-  multiSel: Bool
+  multiSel: Bool,
+  lastHighlight: Int
 }
 
 createNameAndId: Ftab -> NameAndId
@@ -59,6 +62,7 @@ type Msg
   | CloseSelected
   | RemoveDuplicate
   | MultiSel
+  | HighlightHist (Dict String Int)
   | None
 
 -- Helper function for creating types
@@ -67,7 +71,7 @@ createFtab tab =
   let
     analyzed = Helper.analyseURL tab.url
   in
-    Ftab tab.id tab.name tab.index (Tuple.first analyzed) (Tuple.second analyzed) False False
+    Ftab tab.id tab.name tab.index (Tuple.first analyzed) (Tuple.second analyzed) False False 0
 
 
 type alias NameAndId = {
@@ -98,3 +102,17 @@ multiSelBol =
                                             , Set.empty)}
   in
     Focus.create (\x->Tuple.first x.multiSel) update
+
+decodeHist : Decode.Value -> Result String (Dict String Int)
+decodeHist =
+    Decode.decodeValue (Decode.dict Decode.int)
+
+toHighlightHist : Result String (Dict String Int) -> Msg
+toHighlightHist result =
+    case result of
+        Ok a -> HighlightHist a
+        _ -> None
+
+
+stateHead : Table.State -> String
+stateHead (Table.State s b) = s
