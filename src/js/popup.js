@@ -6,11 +6,8 @@ const mountPoint = document.getElementById("elm-mount")
 const app = Elm.Main.embed(mountPoint)
 const sortSetting = "lastSort"
 chrome.storage.local.get(sortSetting, (o) => {
-    if(chrome.runtime.lastError)
-    {
-        return;
-    }
-    app.ports.sortSetting.send(o[sortSetting])
+    if (sortSetting)
+        app.ports.sortSetting.send(o[sortSetting])
 
 })
 

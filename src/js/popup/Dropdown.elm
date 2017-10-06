@@ -20,13 +20,14 @@ dropdown model =
                     ]  
         , deleteButton <| transparent multiMode
         , div [class "filter"] 
-                    [span [] [text "Filter"]
+                    [span [] [text "Filter and Sort"]
                     , div [class "dropdown-content"] [ p [bold indexMode, onClick <| SetTableState <| Table.initialSort "Index"]
                                                         [text "Sort by order"]
                                                      , p [bold highMode, onClick <| SetTableState <| Table.initialSort "LastHighlight"] 
                                                         [text "Sort by last view"]
                                                      , p [bold urlMode, onClick <| SetTableState <| Table.initialSort "BaseURL"] 
-                                                        [text "Sort by url"]  ]]
+                                                        [text "Sort by url"]
+                                                      ]]
             ]
 
 deleteButton : Attribute Msg -> Html Msg

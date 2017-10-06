@@ -76,6 +76,9 @@ selectedId = "selected"
 multiSel : String
 multiSel = "multiSel"
 
+unread : String
+unread = "unread"
+
 highlightSelectedRow: Ftab -> List (Html.Attribute Msg)
 highlightSelectedRow tab =
     let 
@@ -83,9 +86,11 @@ highlightSelectedRow tab =
             else []
       two = if (tab.multiSel) then [class multiSel]
             else [] 
+      three = if (tab.lastHighlight == 0) then [class unread]
+            else []
     in 
     List.append [onMouseEnter <| MouseIn tab.id
-                , onMouseLeave <| Deselect tab.id] <| one ++ two
+                , onMouseLeave <| Deselect tab.id] <| one ++ two ++ three
 
 onKeyUp : (Int -> msg) -> Html.Attribute msg
 onKeyUp tagger =

@@ -79,7 +79,7 @@ update msg model =
             transform b = 
                 case Dict.get (toString b.id) a of
                     Just i -> {b | lastHighlight = i}
-                    _ -> Debug.log "success"  b
+                    _ -> b
             
         in      
             {model | tabs = List.map transform model.tabs } ! []
