@@ -6,8 +6,7 @@
   "version": "0.2.0",
   "options_page": "options.html",
   "background": {
-    "scripts": ["background.bundle.js"],
-    "persistent": false
+    "scripts": ["background.bundle.js"]
   },
 
 

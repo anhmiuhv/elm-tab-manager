@@ -29,6 +29,7 @@ var compiler = webpack(config);
 var server =
   new WebpackDevServer(compiler, {
     hot: true,
+    stats: { colors: true },
     contentBase: path.join(__dirname, "../build"),
     headers: { "Access-Control-Allow-Origin": "*" }
   });
