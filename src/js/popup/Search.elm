@@ -49,14 +49,16 @@ queryToListTab model =
                search model.tabs keywords
                   |> List.map (\(t, i) -> ({t | index = i}, i))
                   |> List.map Tuple.first
-        selectTab : Int -> Ftab -> Ftab
-        selectTab index tab = {tab | selected = (Set.member tab.id multi) ||
-                                    ((index == model.selected % List.length querriedTabs) 
-                                    && (index /= model.deselect))
-                                    , multiSel = Set.member tab.id multi
-                                  }
-                             
-        
-    in List.indexedMap selectTab <| Table.applySorter (stateTail model.tableState)
+        sortedTabs = Table.applySorter (stateTail model.tableState)
                                             (titleToFunc <| stateHead model.tableState)
                                              querriedTabs
+        index = Debug.log "index" <| case findIndex (\x -> x.id == model.selected) sortedTabs of
+                    Just i -> i
+                    Nothing -> 0
+        
+        selectTab = List.indexedMap (\i t -> {t| selected = (model.deltaSel /= -1000000)  
+                                                      && ((model.deltaSel + index) % (List.length sortedTabs)) == i
+                                                   , multiSel = Set.member t.id multi}) sortedTabs 
+                             
+        
+    in  selectTab

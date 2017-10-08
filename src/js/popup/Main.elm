@@ -3,7 +3,6 @@ port module Main exposing (..)
 
 import Html.Attributes exposing (placeholder, id, autofocus, class)
 import Html.Events exposing (onInput, onClick)
-import List.Extra
 import Html exposing (..)
 import CustomConfig exposing (..)
 import Data exposing (..)
@@ -11,7 +10,6 @@ import Helper exposing (..)
 import Update
 import Table
 import Chrome
-import Dict
 import Search
 import Focus
 import Set
@@ -38,9 +36,9 @@ init tbs =
         { tabs = List.map createFtab tbs
             , tableState = Table.initialSort "Index"
             , query = ""
-            , selected = -1
-            , deselect = -1
-            , deltaSel = 0
+            , selected = 0
+            , deselect = 0
+            , deltaSel = -1000000
             , multiSel = (False, Set.empty)
         }
     in (model, Chrome.getAllTabs "")
@@ -51,39 +49,30 @@ init tbs =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        m = {model | deltaSel = if model.deltaSel == -1000000 then model.deltaSel
+                                else 0}
+    in    
   case msg of
-    None -> (model, Cmd.none)
-    SetQuery newQuery -> Update.setQueryHandler newQuery model
-    SetTableState newState -> Update.setTableStateHandler newState model
-    AllTabs tabs -> Update.allTabsHandler tabs model
-    KeyChangeSelect what -> Update.keyChangeHandler {model | deselect = -1} what
-    RemoveDuplicate -> if Focus.get multiSelBol model then model ! [] 
-                        else Update.removeDupHandler model
-    CloseFrom id -> Update.closeFromHandler id model
-    MultiSel -> Focus.update multiSelBol not model ! []
-    ClickFrom id -> if not <| Focus.get multiSelBol model then (model, Chrome.highlight id)
-                    else Focus.update multiSelSet (maybeInsert id) model ! []
+    None -> (m, Cmd.none)
+    SetQuery newQuery -> Update.setQueryHandler newQuery m
+    SetTableState newState -> Update.setTableStateHandler newState m
+    AllTabs tabs -> Update.allTabsHandler tabs m
+    KeyChangeSelect what -> Update.keyChangeHandler model  what
+    RemoveDuplicate -> if Focus.get multiSelBol m then m ! [] 
+                        else Update.removeDupHandler m
+    CloseFrom id -> Update.closeFromHandler id m
+    MultiSel -> Focus.update multiSelBol not m ! []
+    ClickFrom id -> if not <| Focus.get multiSelBol m then (m, Chrome.highlight id)
+                    else Focus.update multiSelSet (maybeInsert id) m ! []
           
-    MouseIn id ->
-      case List.Extra.findIndex (\t->t.id == id) model.tabs of
-        Just i -> ({model | selected = i, deselect = -1}, Cmd.none)
-        Nothing -> model ! []
+    MouseIn id ->{m | selected = id, deltaSel = 0, deselect = -1} ! []
 
-    Deselect id ->
-      case List.Extra.findIndex (\t->t.id == id) model.tabs of
-        Just i -> ({model | deselect = i}, Cmd.none)
-        Nothing -> model ! []
+    Deselect id -> if model.deltaSel == 0 then {model | deselect = id, deltaSel = -1000000} ! []
+                        else {model | deselect = id} ! []
 
-    CloseSelected -> Update.closeSelectedHandler model
-    HighlightHist a -> let
-            transform : Ftab -> Ftab
-            transform b = 
-                case Dict.get (toString b.id) a of
-                    Just i -> {b | lastHighlight = i}
-                    _ -> b
-            
-        in      
-            {model | tabs = List.map transform model.tabs } ! []
+    CloseSelected -> Update.closeSelectedHandler m
+    HighlightHist a -> Update.highlightHistHandler m a
 
 
 
@@ -97,10 +86,10 @@ view {tabs, tableState, query, selected, deselect, deltaSel, multiSel} =
       model = Model tabs tableState query selected deselect deltaSel multiSel
       queriedTabs = Search.queryToListTab model      
     in
-        div [id "body"]
+        div [id "body", onKeyUp emmitUpDown]
             [ div [class "dropdown-container"] (Dropdown.dropdown model)
             , input [id "searchBox",placeholder "Search"
-            , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
+            , onInput SetQuery,  autofocus True] [],
             Table.view config tableState queriedTabs
             ]
 

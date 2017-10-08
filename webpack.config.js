@@ -66,8 +66,7 @@ var options = {
                 loader: 'elm-webpack-loader',
                 options: {
                   verbose: true,
-                  warn: true
-                }
+                  warn: true                }
               },
               ]
             },

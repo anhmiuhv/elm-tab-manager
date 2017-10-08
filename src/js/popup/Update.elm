@@ -9,16 +9,22 @@ import Chrome
 import Set
 import Table
 import Search
+import Dict
 import Focus
 
 keyChangeHandler : Model -> What -> (Model, Cmd Msg) 
 keyChangeHandler model what =
-        let
-            sel = model.selected
-
-          in case what of
-              Up -> ({ model | selected = sel- 1}, Chrome.scrolTo 1)
-              Down -> ({model | selected = sel + 1}, Chrome.scrolTo 1)
+          let
+            actualval deltaSel d =
+              case deltaSel of
+                -1000000 -> 0
+                _ -> deltaSel + d
+              
+          in
+              
+           case what of
+              Up -> ({ model |  deltaSel =  actualval model.deltaSel -1}, Chrome.scrolTo 1)
+              Down -> ({model |  deltaSel = actualval model.deltaSel 1}, Chrome.scrolTo 1)
               Enter ->
                 let
                    selectedTabs =  Search.queryToListTab model
@@ -34,13 +40,13 @@ removeDupHandler model =
 
 setQueryHandler : String -> Model -> (Model , Cmd Msg)
 setQueryHandler newQuery model =
-  ( { model | query = newQuery, selected = -1 }
+  ( { model | query = newQuery}
       , Cmd.none
       )
 
 setTableStateHandler : Table.State -> Model -> (Model, Cmd Msg)
 setTableStateHandler newState model =
-  ( { model | tableState = newState }
+  ( { model | tableState = newState}
       , Chrome.setSort <| stateHead newState
       )
 
@@ -61,3 +67,15 @@ closeSelectedHandler model =
     let
       closeSet = Focus.get multiSelSet model
     in ({model | tabs = List.filter (\x->not <| Set.member x.id closeSet) model.tabs},  Chrome.closeMany <| Set.toList closeSet)
+
+highlightHistHandler : Model -> Dict.Dict String Int -> (Model, Cmd Msg)
+highlightHistHandler m a =
+  let
+            transform : Ftab -> Ftab
+            transform b = 
+                case Dict.get (toString b.id) a of
+                    Just i -> {b | lastHighlight = i}
+                    _ -> b
+            
+        in      
+            {m | tabs = List.map transform m.tabs } ! []
