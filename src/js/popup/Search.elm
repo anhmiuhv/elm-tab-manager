@@ -5,6 +5,7 @@ import Regex exposing (..)
 import List.Extra exposing (..)
 import Focus
 import Dict
+import Table
 import Set
 
 {- heuristics search using splitted words from user queries
@@ -56,4 +57,6 @@ queryToListTab model =
                                   }
                              
         
-    in List.indexedMap selectTab querriedTabs
+    in List.indexedMap selectTab <| Table.applySorter (stateTail model.tableState)
+                                            (titleToFunc <| stateHead model.tableState)
+                                             querriedTabs

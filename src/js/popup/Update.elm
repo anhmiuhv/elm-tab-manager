@@ -33,7 +33,7 @@ removeDupHandler model =
     in {model | tabs = keepList} ! [Chrome.closeMany <| List.map (.id) remList]
 
 setQueryHandler : String -> Model -> (Model , Cmd Msg)
-setQueryHandler newQuery model = 
+setQueryHandler newQuery model =
   ( { model | query = newQuery, selected = -1 }
       , Cmd.none
       )

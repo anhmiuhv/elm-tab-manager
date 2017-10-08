@@ -40,6 +40,7 @@ init tbs =
             , query = ""
             , selected = -1
             , deselect = -1
+            , deltaSel = 0
             , multiSel = (False, Set.empty)
         }
     in (model, Chrome.getAllTabs "")
@@ -91,17 +92,16 @@ update msg model =
 -- VIEW
 
 view : Model -> Html Msg
-view {tabs, tableState, query, selected, deselect, multiSel} =
+view {tabs, tableState, query, selected, deselect, deltaSel, multiSel} =
     let
-      model = Model tabs tableState query selected deselect multiSel
-      selectedTabs = Search.queryToListTab model
-      
+      model = Model tabs tableState query selected deselect deltaSel multiSel
+      queriedTabs = Search.queryToListTab model      
     in
         div [id "body"]
             [ div [class "dropdown-container"] (Dropdown.dropdown model)
             , input [id "searchBox",placeholder "Search"
             , onInput SetQuery, onKeyUp emmitUpDown, autofocus True] [],
-            Table.view config tableState selectedTabs
+            Table.view config tableState queriedTabs
             ]
 
 config : Table.Config Ftab Msg

@@ -5,6 +5,13 @@ env = require("./utils/env"),
 HtmlWebpackPlugin = require("html-webpack-plugin"),
 WriteFilePlugin = require("write-file-webpack-plugin");
 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
+const extractSass = new ExtractTextPlugin({
+    filename: "[name].css",
+    disable: process.env.NODE_ENV === "development"
+});
+
 // load the secrets
 var alias = {};
 
@@ -30,17 +37,12 @@ var options = {
     noParse: [/.elm$/],
 
     rules: [
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
-            {
-              test: /\.s(a|c)ss$/,
-              use: [{
-                loader: "style-loader" // creates style nodes from JS strings
-              }, {
-                loader: "css-loader" // translates CSS into CommonJS
-              }, {
-                loader: "sass-loader" // compiles Sass to CSS
-              }]
+            { 
+              test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
+              loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+            { 
+             test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+             loader: "file-loader" 
             },
             {
               test: /\.css$/,
@@ -66,7 +68,20 @@ var options = {
                   verbose: true,
                   warn: true
                 }
-              }]
+              },
+              ]
+            },
+            {
+              test: /\.s(a|c)ss$/,
+              use: extractSass.extract({
+                use: [{
+                    loader: "css-loader"
+                }, {
+                    loader: "sass-loader"
+                }],
+                // use style-loader in development
+                fallback: "style-loader"
+              }),
             }]
           },
           resolve: {
@@ -92,7 +107,8 @@ var options = {
       filename: "background.html",
       chunks: ["background"]
     }),
-    new WriteFilePlugin()
+    new WriteFilePlugin(),
+    extractSass
     ]
   };
 

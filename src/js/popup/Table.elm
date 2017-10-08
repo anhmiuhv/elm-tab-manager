@@ -3,10 +3,10 @@ module Table exposing
   , config, stringColumn, intColumn, floatColumn
   , State(..), initialSort
   , Column, customColumn, veryCustomColumn
-  , Sorter, unsortable, increasingBy, decreasingBy
+  , Sorter(..), unsortable, increasingBy, decreasingBy
   , increasingOrDecreasingBy, decreasingOrIncreasingBy
   , Config, customConfig
-  , Customizations, HtmlDetails, Status(..), defaultCustomizations
+  , Customizations, HtmlDetails, Status(..), defaultCustomizations, applySorter
   )
 
 {-|

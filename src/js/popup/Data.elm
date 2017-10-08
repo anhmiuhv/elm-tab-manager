@@ -19,6 +19,7 @@ type alias Model =
     , query : String
     , selected : Int
     , deselect : Int
+    , deltaSel : Int
     , multiSel : (Bool, Set Int)
     }
 
@@ -116,3 +117,14 @@ toHighlightHist result =
 
 stateHead : Table.State -> String
 stateHead (Table.State s b) = s
+
+stateTail : Table.State -> Bool
+stateTail (Table.State s b) = b
+
+titleToFunc : String -> Table.Sorter Ftab
+titleToFunc s =
+  case s of
+    "Index" -> Table.Increasing <| List.sortBy .index
+    "LastHighlight" -> Table.Increasing <| List.sortBy .lastHighlight
+    "BaseURL" -> Table.Increasing <| List.sortBy .baseUrl
+    _ -> Table.Increasing <| List.sortBy .baseUrl
