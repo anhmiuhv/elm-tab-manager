@@ -5,6 +5,7 @@ import Html.Events exposing (onClick, keyCode, onWithOptions, defaultOptions, on
 import Table exposing (defaultCustomizations)
 import Json.Decode as Json
 import Data exposing (..)
+import Helper exposing (..)
 
 -- remove thead, otherwise use popup.sass for design
 customizations : Table.Customizations Ftab Msg
@@ -82,12 +83,9 @@ unread = "unread"
 highlightSelectedRow: Ftab -> List (Html.Attribute Msg)
 highlightSelectedRow tab =
     let 
-      one = if (tab.selected) then [id selectedId]
-            else []
-      two = if (tab.multiSel) then [class multiSel]
-            else [] 
-      three = if (tab.lastHighlight == 0) then [class unread]
-            else []
+      one = (tab.selected) :? [id selectedId] ? []
+      two = (tab.multiSel) :? [class multiSel] ? [] 
+      three = (tab.lastHighlight == 0) :? [class unread] ? []
     in 
     List.append [onMouseEnter <| MouseIn tab.id
                 , onMouseLeave <| Deselect tab.id] <| one ++ two ++ three

@@ -38,8 +38,6 @@ thisIf attr cond trueR falseR =
     if cond then style [(attr, trueR)]
     else style [(attr, falseR)]
 
-infixr 9 :?
-
 transparent : Bool -> Attribute Msg
 transparent b = thisIf "opacity" b "1" "0"
 
@@ -49,3 +47,4 @@ isInMode model s = (stateHead model.tableState) == s
 
 bold: Bool -> Attribute Msg
 bold b = thisIf "font-weight"  b "bold" "normal"
+

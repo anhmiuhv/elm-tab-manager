@@ -1,4 +1,4 @@
-module Helper exposing (analyseURL, maybeInsert)
+module Helper exposing (analyseURL, maybeInsert, (:?), (?))
 
 import Dict exposing (Dict)
 import List.Extra exposing (getAt)
@@ -45,3 +45,13 @@ analyseURL url =
 maybeInsert : Int -> Set Int -> Set Int
 maybeInsert i s = if (Set.member i s) then Set.remove i s
                   else Set.insert i s
+
+-- syntaxtic sugar if else then
+(:?) : Bool -> a -> Maybe a
+(:?) bol trC = if bol then Just trC
+                else Nothing
+
+-- syntaxtic sugar if else then
+(?) : Maybe a -> a -> a
+(?) mx x =
+    Maybe.withDefault x mx
