@@ -3,6 +3,7 @@ module Search exposing (queryToListTab)
 import Data exposing (..)
 import Regex exposing (..)
 import List.Extra exposing (..)
+import Maybe.Extra exposing ((?))
 import Focus
 import Dict
 import Table
@@ -52,13 +53,9 @@ queryToListTab model =
         sortedTabs = Table.applySorter (stateTail model.tableState)
                                             (titleToFunc <| stateHead model.tableState)
                                              querriedTabs
-        index = Debug.log "index" <| case findIndex (\x -> x.id == model.selected) sortedTabs of
-                    Just i -> i
-                    Nothing -> 0
-        
-        selectTab = List.indexedMap (\i t -> {t| selected = (model.deltaSel /= -1000000)  
-                                                      && ((model.deltaSel + index) % (List.length sortedTabs)) == i
-                                                   , multiSel = Set.member t.id multi}) sortedTabs 
+        index = findIndex (\x -> x.id == model.selected) sortedTabs ? 0      
+    in List.indexedMap (\i t -> {t | selected = (model.deltaSel /= -1000000)  
+                                    && ((model.deltaSel + index) % (List.length sortedTabs)) == i
+                                    , multiSel = Set.member t.id multi}) sortedTabs 
                              
         
-    in  selectTab

@@ -18,7 +18,6 @@ type alias Model =
     , tableState : Table.State
     , query : String
     , selected : Int
-    , deselect : Int
     , deltaSel : Int
     , multiSel : (Bool, Set Int)
     }
@@ -123,8 +122,8 @@ stateTail (Table.State s b) = b
 
 titleToFunc : String -> Table.Sorter Ftab
 titleToFunc s =
-  case s of
-    "Index" -> Table.Increasing <| List.sortBy .index
-    "LastHighlight" -> Table.Increasing <| List.sortBy .lastHighlight
-    "BaseURL" -> Table.Increasing <| List.sortBy .baseUrl
-    _ -> Table.Increasing <| List.sortBy .baseUrl
+  Table.Increasing <| case s of
+    "Index" ->  List.sortBy .index
+    "LastHighlight" ->  List.sortBy .lastHighlight
+    "BaseURL" ->  List.sortBy .baseUrl
+    _ ->  List.sortBy .baseUrl

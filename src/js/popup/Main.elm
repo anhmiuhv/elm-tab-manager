@@ -37,7 +37,6 @@ init tbs =
             , tableState = Table.initialSort "Index"
             , query = ""
             , selected = 0
-            , deselect = 0
             , deltaSel = -1000000
             , multiSel = (False, Set.empty)
         }
@@ -66,10 +65,10 @@ update msg model =
     ClickFrom id -> if not <| Focus.get multiSelBol m then (m, Chrome.highlight id)
                     else Focus.update multiSelSet (maybeInsert id) m ! []
           
-    MouseIn id ->{m | selected = id, deltaSel = 0, deselect = -1} ! []
+    MouseIn id ->{m | selected = id, deltaSel = 0} ! []
 
-    Deselect id -> if model.deltaSel == 0 then {model | deselect = id, deltaSel = -1000000} ! []
-                        else {model | deselect = id} ! []
+    Deselect id -> if model.deltaSel == 0 then {model | deltaSel = -1000000} ! []
+                        else model ! []
 
     CloseSelected -> Update.closeSelectedHandler m
     HighlightHist a -> Update.highlightHistHandler m a
@@ -81,9 +80,9 @@ update msg model =
 -- VIEW
 
 view : Model -> Html Msg
-view {tabs, tableState, query, selected, deselect, deltaSel, multiSel} =
+view {tabs, tableState, query, selected, deltaSel, multiSel} =
     let
-      model = Model tabs tableState query selected deselect deltaSel multiSel
+      model = Model tabs tableState query selected deltaSel multiSel
       queriedTabs = Search.queryToListTab model      
     in
         div [id "body", onKeyUp emmitUpDown]
