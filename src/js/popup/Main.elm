@@ -58,18 +58,15 @@ update msg model =
     SetTableState newState -> Update.setTableStateHandler newState m
     AllTabs tabs -> Update.allTabsHandler tabs m
     KeyChangeSelect what -> Update.keyChangeHandler model  what
-    RemoveDuplicate -> if Focus.get multiSelBol m then m ! [] 
-                        else Update.removeDupHandler m
+    RemoveDuplicate -> if Focus.get multiSelBol m then (m ! [])
+                        else (Update.removeDupHandler m)
     CloseFrom id -> Update.closeFromHandler id m
     MultiSel -> Focus.update multiSelBol not m ! []
-    ClickFrom id -> if not <| Focus.get multiSelBol m then (m, Chrome.highlight id)
-                    else Focus.update multiSelSet (maybeInsert id) m ! []
-          
+    ClickFrom id -> if (not <| Focus.get multiSelBol m) then (m, Chrome.highlight id) 
+                    else (Focus.update multiSelSet (maybeInsert id) m ! [])
     MouseIn id ->{m | selected = id, deltaSel = 0} ! []
-
-    Deselect id -> if model.deltaSel == 0 then {model | deltaSel = -1000000} ! []
-                        else model ! []
-
+    Deselect id -> if (model.deltaSel == 0) then ({model | deltaSel = -1000000, selected = -1} ! [])
+                    else (model ! [])
     CloseSelected -> Update.closeSelectedHandler m
     HighlightHist a -> Update.highlightHistHandler m a
 
