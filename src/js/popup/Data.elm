@@ -122,7 +122,7 @@ stateTail (Table.State s b) = b
 
 titleToFunc : String -> Table.Sorter Ftab
 titleToFunc s =
-  Table.Increasing <| case s of
+  Table.Decreasing <| case s of
     "Index" ->  List.sortBy .index
     "LastHighlight" ->  List.sortBy .lastHighlight
     "BaseURL" ->  List.sortBy .baseUrl
