@@ -14,4 +14,4 @@ better tab management for chrome
 <image src="https://raw.githubusercontent.com/anhmiuhv/elm-tab-manager/master/static/gif.gif" width ="270"/>
 
 
-[https://chrome.google.com/webstore/detail/manage-tabs/ijpehkmdcfiakiognpklkfgipjghdacj](Chrome store link)
+[Chrome store link](https://chrome.google.com/webstore/detail/manage-tabs/ijpehkmdcfiakiognpklkfgipjghdacj)
